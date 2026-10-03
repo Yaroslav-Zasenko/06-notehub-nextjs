@@ -80,7 +80,7 @@ export default function NotesPage(): React.ReactElement {
           <NoteForm onClose={() => setIsCreateModalOpen(false)} />
         </Modal>
 
-        {/* Модальне вікно перегляду нотатки */}
+        
         {/* Модальне вікно перегляду нотатки */}
         {selectedNote && (
           <Modal isOpen={!!selectedNote} onClose={() => setSelectedNote(null)}>
