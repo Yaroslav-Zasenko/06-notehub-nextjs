@@ -1,12 +1,10 @@
 'use client';
 
-import * as ReactPaginateModule from 'react-paginate';
+import ReactPaginate from 'react-paginate';
 import css from './Pagination.module.css';
 
-// Коректний безпечний імпорт для Next.js та Turbopack
-const ReactPaginate = 
-  (ReactPaginateModule as unknown as { default: typeof ReactPaginateModule }).default || 
-  ReactPaginateModule;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SafeReactPaginate = ReactPaginate as any;
 
 interface PaginationProps {
   pageCount: number;
@@ -31,7 +29,7 @@ export default function Pagination({
   const safeCurrentPage = Math.max(0, Math.min(currentPage - 1, pageCount - 1));
 
   return (
-    <ReactPaginate
+    <SafeReactPaginate
       key={pageCount}
       forcePage={safeCurrentPage}
       previousLabel={'<'}

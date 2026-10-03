@@ -1,4 +1,4 @@
-import type { Metadata } from 'html-webpack-plugin' // або стандартний React/Next тип
+import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
