@@ -15,20 +15,19 @@ import css from './NotesPage.module.css';
 export default function NotesClient(): React.ReactElement {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [inputValue, setInputValue] = useState(''); // стан для миттєвого відображення в інпуті
+  const [inputValue, setInputValue] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const perPage = 12;
 
-  // Дебаунсед-функція для оновлення пошукового запиту
   const debouncedSetSearch = useDebouncedCallback((query: string) => {
     setSearch(query);
     setPage(1);
   }, 300);
 
   const handleSearchChange = (query: string) => {
-    setInputValue(query); // миттєво оновлюємо інпут для плавного введення
-    debouncedSetSearch(query); // запускаємо дебаунс для запиту
+    setInputValue(query);
+    debouncedSetSearch(query);
   };
 
   const { data, isLoading, isError } = useQuery({
@@ -53,13 +52,16 @@ export default function NotesClient(): React.ReactElement {
             <SearchBox value={inputValue} onSearch={handleSearchChange} />
           </div>
 
-          <div className={css.paginationContainer}>
-            <Pagination
-              pageCount={totalPages}
-              currentPage={page}
-              onPageChange={handlePageChange}
-            />
-          </div>
+          {/* Рендеримо Pagination лише якщо сторінок більше ніж 1 */}
+          {totalPages > 1 && (
+            <div className={css.paginationContainer}>
+              <Pagination
+                pageCount={totalPages}
+                currentPage={page}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
 
           <div className={css.actionContainer}>
             <button 
@@ -74,11 +76,16 @@ export default function NotesClient(): React.ReactElement {
         {isLoading && <p>Loading notes...</p>}
         {isError && <p>Failed to load notes. Please try again.</p>}
 
+        {/* Рендеримо NoteList лише за наявності нотаток, інакше виводимо інформаційне повідомлення */}
         {!isLoading && !isError && (
-          <NoteList 
-            notes={notes} 
-            onView={(note) => setSelectedNote(note)} 
-          />
+          notes.length > 0 ? (
+            <NoteList 
+              notes={notes} 
+              onView={(note) => setSelectedNote(note)} 
+            />
+          ) : (
+            <p className={css.noNotes}>No notes found.</p>
+          )
         )}
 
         <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
