@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useDebouncedCallback } from 'use-debounce';
 import { getNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
@@ -14,24 +15,31 @@ import css from './NotesPage.module.css';
 export default function NotesClient(): React.ReactElement {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [inputValue, setInputValue] = useState(''); // стан для миттєвого відображення в інпуті
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const perPage = 12;
 
+  // Дебаунсед-функція для оновлення пошукового запиту
+  const debouncedSetSearch = useDebouncedCallback((query: string) => {
+    setSearch(query);
+    setPage(1);
+  }, 300);
+
+  const handleSearchChange = (query: string) => {
+    setInputValue(query); // миттєво оновлюємо інпут для плавного введення
+    debouncedSetSearch(query); // запускаємо дебаунс для запиту
+  };
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['notes', { page, perPage, search }],
     queryFn: () => getNotes({ page, perPage, search }),
-    placeholderData: (previousData) => previousData, staleTime: 1000 * 60,
+    placeholderData: (previousData) => previousData,
+    staleTime: 1000 * 60,
   });
 
   const notes = data?.notes || [];
   const totalPages = data?.totalPages || 1;
-
-  const handleSearch = (query: string) => {
-    if (query === search) return;
-    setSearch(query);
-    setPage(1);
-  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -42,7 +50,7 @@ export default function NotesClient(): React.ReactElement {
       <div className={css.app}>
         <div className={css.toolbar}>
           <div className={css.searchContainer}>
-            <SearchBox onSearch={handleSearch} />
+            <SearchBox value={inputValue} onSearch={handleSearchChange} />
           </div>
 
           <div className={css.paginationContainer}>
