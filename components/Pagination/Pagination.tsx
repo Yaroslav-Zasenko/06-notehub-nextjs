@@ -1,10 +1,10 @@
 'use client';
 
-import ReactPaginate from 'react-paginate';
+import ReactPaginate, { ReactPaginateProps } from 'react-paginate';
 import css from './Pagination.module.css';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const SafeReactPaginate = ReactPaginate as any;
+// Типізуємо обгортку через ReactPaginateProps замість any
+const SafeReactPaginate = ReactPaginate as unknown as React.ComponentType<ReactPaginateProps>;
 
 interface PaginationProps {
   pageCount: number;

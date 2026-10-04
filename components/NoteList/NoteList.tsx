@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteNote } from '@/lib/api';
 import type { Note } from '@/types/note';
@@ -10,7 +11,7 @@ interface NoteListProps {
   onView?: (note: Note) => void;
 }
 
-export default function NoteList({ notes, onView }: NoteListProps): React.ReactElement {
+export default function NoteList({ notes }: NoteListProps): React.ReactElement {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
@@ -34,12 +35,12 @@ export default function NoteList({ notes, onView }: NoteListProps): React.ReactE
           <div className={css.footer}>
             <span className={css.tag}>{note.tag}</span>
 
-            <button 
-              className={css.link} 
-              onClick={() => onView?.(note)}
+            <Link 
+              href={`/notes/${note.id}`}
+              className={css.link}
             >
               View Details
-            </button>
+            </Link>
 
             <button 
               className={css.button} 

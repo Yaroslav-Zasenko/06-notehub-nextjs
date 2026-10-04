@@ -14,9 +14,3 @@ export interface CreateNotePayload {
   content: string;
   tag: NoteTag;
 }
-
-// Додаємо інтерфейс для відповіді зі списком і загальною кількістю
-export interface NotesResponse {
-  notes: Note[];
-  total: number;
-}
